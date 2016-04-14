@@ -4,10 +4,8 @@ type Message = string
 type Keyword = string
 
 let allLetters =
-    [
-        for c in int('a')..int('z') do
-        yield char(c)
-    ]
+    [for c in int('a')..int('z') do
+     yield char(c)]
 
 let rec infinite alphabet = 
     seq {
@@ -64,23 +62,23 @@ let rec isConstructedByRepeating (subset : char list) (text : char list) =
         text |> startswith subset 
         && text |> List.skip(subset.Length) |> isConstructedByRepeating subset
 
-let largestRepeatingSubset allchars = 
-    let rec lrs acc (chars : char list) = 
+let smallestRepeatingSubset allchars = 
+    let rec srs acc (chars : char list) = 
         match chars with
         | [] -> acc
         | h :: t -> 
             let subset = acc @ [h]
             if allchars |> isConstructedByRepeating subset
             then subset
-            else lrs subset t
-    lrs [] allchars
+            else srs subset t
+    srs [] allchars
 
 let decipher (cipher:Message) (message:Message) : Keyword =
     message
     |> Seq.zip cipher
     |> Seq.map (fun (c, m) -> crack m c)
     |> Seq.toList
-    |> largestRepeatingSubset
+    |> smallestRepeatingSubset
     |> Array.ofSeq
     |> Keyword
 
